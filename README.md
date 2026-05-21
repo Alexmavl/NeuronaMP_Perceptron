@@ -25,8 +25,8 @@ Sigue estos pasos para ejecutar el proyecto en tu máquina local:
 ### 1. Clonar el repositorio
 Abre una terminal y ejecuta el siguiente comando:
 ```bash
-git clone https://github.com/TU_USUARIO/NOMBRE_DEL_REPOSITORIO.git
-cd NOMBRE_DEL_REPOSITORIO
+git clone https://github.com/Alexmavl/NeuronaMP_Perceptron.git
+cd NeuronaMP_Perceptron
 ```
 
 ### 2. Crear un entorno virtual (Opcional pero recomendado)
