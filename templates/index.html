@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA - Tarea 8: Redes Neuronales</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='img/umg.png') }}" alt="Logo UMG">
+            </div>
+            <div class="info-container">
+                <h1>{{ catedra }}</h1>
+                <p>Catedrático: {{ catedratico }} | Universidad Mariano Gálvez de Guatemala</p>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="cards-container">
+            <!-- Card Perceptrón -->
+            <section class="card">
+                <h2>Perceptrón: Tarjeta Platinum</h2>
+                <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                    Decide la aprobación de crédito basada en suma ponderada (Edad, Ahorros) + Bias (0.15).
+                </p>
+                
+                <div class="form-group">
+                    <label for="p-edad">Edad (X1):</label>
+                    <input type="number" id="p-edad" placeholder="Ej. 25">
+                </div>
+                <div class="form-group">
+                    <label for="p-ahorros">Ahorros en cuenta (X2):</label>
+                    <input type="number" id="p-ahorros" placeholder="Ej. 5000">
+                </div>
+                
+                <button onclick="calcularPerceptron()">Analizar Solicitud</button>
+                
+                <div id="res-perceptron" class="result-area">
+                    <p id="res-p-msg" style="font-weight: bold; font-size: 1.2rem;"></p>
+                    <p id="res-p-meta" style="font-size: 0.8rem;"></p>
+                </div>
+            </section>
+
+            <!-- Card McCulloch-Pitts -->
+            <section class="card">
+                <h2>Neurona M-P: Ir al cine</h2>
+                <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                    Suma de entradas excitatorias contra un umbral (θ = 2).
+                </p>
+                
+                <div class="switch-group">
+                    <label>¿Es fin de semana?</label>
+                    <input type="checkbox" id="m-x1">
+                </div>
+                <div class="switch-group">
+                    <label>¿Sin tareas pendientes?</label>
+                    <input type="checkbox" id="m-x2">
+                </div>
+                <div class="switch-group">
+                    <label>¿Cine abierto?</label>
+                    <input type="checkbox" id="m-x3">
+                </div>
+                <div class="switch-group">
+                    <label>¿Es un estreno?</label>
+                    <input type="checkbox" id="m-x4">
+                </div>
+                
+                <button onclick="calcularMP()" style="margin-top: 1rem;">Evaluar Decisión</button>
+                
+                <div id="res-mp" class="result-area">
+                    <p id="res-m-msg" style="font-weight: bold; font-size: 1.2rem;"></p>
+                    <p id="res-m-meta" style="font-size: 0.8rem;"></p>
+                </div>
+            </section>
+
+            <!-- Card Fórmulas -->
+            <section class="card">
+                <h2>Lógica y Fórmulas</h2>
+                <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 1rem;">
+                    Las neuronas procesan la información mediante las siguientes expresiones matemáticas:
+                </p>
+                
+                <div class="formula-group">
+                    <label>Perceptrón (Platinum):</label>
+                    <div class="formula-display">
+                        f(x) = (Edad * 0.01) + (Ahorros * 0.0005) + 0.15
+                    </div>
+                </div>
+
+                <div class="formula-group" style="margin-top: 1.5rem;">
+                    <label>Neurona M-P (Cine):</label>
+                    <div class="formula-display">
+                        Z = X1 + X2 + X3 + X4 | Umbral (θ) = 2
+                    </div>
+                </div>
+
+                <p style="color: var(--text-dim); font-size: 0.8rem; margin-top: 1.5rem;">
+                    * Si el resultado es mayor o igual al umbral, la neurona se activa (1), de lo contrario permanece inactiva (0).
+                </p>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <p>Desarrollado por: <span class="highlight">{{ desarrollador }}</span></p>
+            <p>Carnet: <span class="highlight">{{ carnet }}</span></p>
+            <p>&copy; 2026 - Noveno Semestre</p>
+        </div>
+    </footer>
+
+    <script>
+        async function calcularPerceptron() {
+            const edad = document.getElementById('p-edad').value;
+            const ahorros = document.getElementById('p-ahorros').value;
+            
+            const response = await fetch('/api/perceptron', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({edad, ahorros})
+            });
+            const data = await response.json();
+            
+            const resDiv = document.getElementById('res-perceptron');
+            const msgP = document.getElementById('res-p-msg');
+            const metaP = document.getElementById('res-p-meta');
+            
+            resDiv.style.display = 'block';
+            resDiv.className = 'result-area ' + (data.resultado === 1 ? 'result-success' : 'result-fail');
+            msgP.innerText = data.mensaje;
+            metaP.innerText = `Suma ponderada: ${data.suma}`;
+        }
+
+        async function calcularMP() {
+            const x1 = document.getElementById('m-x1').checked ? 1 : 0;
+            const x2 = document.getElementById('m-x2').checked ? 1 : 0;
+            const x3 = document.getElementById('m-x3').checked ? 1 : 0;
+            const x4 = document.getElementById('m-x4').checked ? 1 : 0;
+            
+            const response = await fetch('/api/neurona_mp', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({x1, x2, x3, x4})
+            });
+            const data = await response.json();
+            
+            const resDiv = document.getElementById('res-mp');
+            const msgP = document.getElementById('res-m-msg');
+            const metaP = document.getElementById('res-m-meta');
+            
+            resDiv.style.display = 'block';
+            resDiv.className = 'result-area ' + (data.resultado === 1 ? 'result-success' : 'result-fail');
+            msgP.innerText = data.mensaje;
+            metaP.innerText = `Z(X) = ${data.z} | Umbral = ${data.theta}`;
+        }
+    </script>
+</body>
+</html>
