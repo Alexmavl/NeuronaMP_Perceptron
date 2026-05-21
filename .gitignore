@@ -1,0 +1,9 @@
+# Archivos de la tarea (Internos)
+tarea_neurona.md.txt
+guion_video.md
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.env
