@@ -9,24 +9,48 @@ def calcular_perceptron(edad, ahorros):
     w2 = 0.0005
     suma_ponderada = (edad * w1) + (ahorros * w2) + bias
     resultado = 1 if suma_ponderada > 0 else 0
+    
+    # Formato según PDF Clase 11
+    linea1 = f"Z = (X1*W1 + X2*W2) + b"
+    linea2 = f"Z = ({edad} * {w1} + {ahorros} * {w2}) + {bias}"
+    linea3 = f"Z = {round(suma_ponderada, 4)}"
+    linea4 = f"Evaluación: {round(suma_ponderada, 4)} > 0" if resultado == 1 else f"Evaluación: {round(suma_ponderada, 4)} <= 0"
+    
+    clase_bg = "bg-aprobado" if resultado == 1 else "bg-denegado"
+    texto_res = "APROBADO" if resultado == 1 else "DENEGADO"
+    evaluacion = f"<div class='result-highlight {clase_bg}'>Resultado Final: {texto_res}</div>"
+    
+    procedimiento_alert = f"{linea1}\n{linea2}\n{linea3}\n{linea4}\n\n{evaluacion}"
+    
     return {
-        "suma": round(suma_ponderada, 4),
         "resultado": resultado,
-        "mensaje": "APROBADO" if resultado == 1 else "DENEGADO"
+        "mensaje": "APROBADO" if resultado == 1 else "DENEGADO",
+        "procedimiento_completo": procedimiento_alert
     }
 
 # --- Lógica de la Neurona M-P (Cine) ---
 def calcular_neurona_mp(x1, x2, x3, x4):
     theta = 2
-    pesos = [1, 1, 1, 1]
     entradas = [x1, x2, x3, x4]
-    z = sum(e * p for e, p in zip(entradas, pesos))
+    z = sum(entradas)
     resultado = 1 if z >= theta else 0
+    
+    # Formato según PDF Clase 10
+    linea1 = f"Z = X1 + X2 + X3 + X4"
+    linea2 = f"Z = {x1} + {x2} + {x3} + {x4}"
+    linea3 = f"Z = {z}"
+    linea4 = f"Evaluación: {z} >= {theta}" if resultado == 1 else f"Evaluación: {z} < {theta}"
+    
+    clase_bg = "bg-si" if resultado == 1 else "bg-no"
+    texto_res = "SÍ VOY AL CINE" if resultado == 1 else "NO VOY AL CINE"
+    evaluacion = f"<div class='result-highlight {clase_bg}'>Resultado Final: {texto_res}</div>"
+    
+    procedimiento_alert = f"{linea1}\n{linea2}\n{linea3}\n{linea4}\n\n{evaluacion}"
+    
     return {
-        "z": z,
-        "theta": theta,
         "resultado": resultado,
-        "mensaje": "SÍ voy al cine" if resultado == 1 else "NO voy al cine"
+        "mensaje": "SÍ voy al cine" if resultado == 1 else "NO voy al cine",
+        "procedimiento_completo": procedimiento_alert
     }
 
 @app.route('/')

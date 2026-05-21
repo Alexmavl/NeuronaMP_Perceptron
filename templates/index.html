@@ -5,6 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IA - Tarea 8: Redes Neuronales</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    
+    <style>
+        .result-highlight {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-weight: bold;
+            color: #fff;
+            animation: pulse 2s infinite;
+        }
+        .bg-aprobado { background-color: #28a745; }
+        .bg-denegado { background-color: #dc3545; }
+        .bg-si { background-color: #28a745; }
+        .bg-no { background-color: #17a2b8; }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -38,11 +64,6 @@
                 </div>
                 
                 <button onclick="calcularPerceptron()">Analizar Solicitud</button>
-                
-                <div id="res-perceptron" class="result-area">
-                    <p id="res-p-msg" style="font-weight: bold; font-size: 1.2rem;"></p>
-                    <p id="res-p-meta" style="font-size: 0.8rem;"></p>
-                </div>
             </section>
 
             <!-- Card McCulloch-Pitts -->
@@ -70,11 +91,6 @@
                 </div>
                 
                 <button onclick="calcularMP()" style="margin-top: 1rem;">Evaluar Decisión</button>
-                
-                <div id="res-mp" class="result-area">
-                    <p id="res-m-msg" style="font-weight: bold; font-size: 1.2rem;"></p>
-                    <p id="res-m-meta" style="font-size: 0.8rem;"></p>
-                </div>
             </section>
 
             <!-- Card Fórmulas -->
@@ -118,6 +134,11 @@
             const edad = document.getElementById('p-edad').value;
             const ahorros = document.getElementById('p-ahorros').value;
             
+            if(!edad || !ahorros) {
+                Swal.fire('Error', 'Por favor complete todos los campos', 'error');
+                return;
+            }
+
             const response = await fetch('/api/perceptron', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -125,14 +146,13 @@
             });
             const data = await response.json();
             
-            const resDiv = document.getElementById('res-perceptron');
-            const msgP = document.getElementById('res-p-msg');
-            const metaP = document.getElementById('res-p-meta');
-            
-            resDiv.style.display = 'block';
-            resDiv.className = 'result-area ' + (data.resultado === 1 ? 'result-success' : 'result-fail');
-            msgP.innerText = data.mensaje;
-            metaP.innerText = `Suma ponderada: ${data.suma}`;
+            Swal.fire({
+                title: 'Procedimiento: Perceptrón',
+                html: `<pre style="text-align: left; background: #f4f4f4; padding: 15px; border-radius: 5px; font-size: 0.9rem;">${data.procedimiento_completo}</pre>`,
+                icon: data.resultado === 1 ? 'success' : 'warning',
+                confirmButtonText: 'Entendido',
+                confirmButtonColor: '#003366'
+            });
         }
 
         async function calcularMP() {
@@ -148,14 +168,13 @@
             });
             const data = await response.json();
             
-            const resDiv = document.getElementById('res-mp');
-            const msgP = document.getElementById('res-m-msg');
-            const metaP = document.getElementById('res-m-meta');
-            
-            resDiv.style.display = 'block';
-            resDiv.className = 'result-area ' + (data.resultado === 1 ? 'result-success' : 'result-fail');
-            msgP.innerText = data.mensaje;
-            metaP.innerText = `Z(X) = ${data.z} | Umbral = ${data.theta}`;
+            Swal.fire({
+                title: 'Procedimiento: Neurona M-P',
+                html: `<pre style="text-align: left; background: #f4f4f4; padding: 15px; border-radius: 5px; font-size: 0.9rem;">${data.procedimiento_completo}</pre>`,
+                icon: data.resultado === 1 ? 'success' : 'info',
+                confirmButtonText: 'Entendido',
+                confirmButtonColor: '#003366'
+            });
         }
     </script>
 </body>
